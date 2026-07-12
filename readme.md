@@ -10,6 +10,7 @@ Press `NVDA+alt+shift+m` to enter the macros layer. Inside the layer, the number
 * `shift+1` to `shift+0`: start recording keystrokes into that slot.
 * `alt+1` to `alt+0`: open the safety checks dialog for that slot.
 * `left arrow` and `right arrow`: switch to the previous or next macro stack. NVDA announces the stack number and how many macros it holds, and the layer stays active so you can press a number right away.
+* `h` or `f1`: speak a summary of these commands. The layer stays active.
 * `escape`: leave the layer without doing anything.
 
 Any other key leaves the layer with a low beep.

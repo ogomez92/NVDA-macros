@@ -133,6 +133,22 @@ msgid_plural "Stack {number}, {count} macros"
 msgstr[0] "Pile {number}, {count} macro"
 msgstr[1] "Pile {number}, {count} macros"
 
+#. Translators: Input help description for the layer command that lists the layer commands.
+msgid "Speaks the commands available in the macros layer"
+msgstr "Annonce les commandes disponibles dans la couche de macros"
+
+#. Translators: Help message spoken when pressing h or f1 inside the macros layer.
+msgid ""
+"1 to 0: play the macro in that slot. Shift plus a number: record into that "
+"slot. Alt plus a number: review speech and edit safety checks. Left and "
+"right arrows: switch macro stacks. H or F1: this help. Escape: exit the "
+"layer."
+msgstr ""
+"1 à 0 : lit la macro de cet emplacement. Maj plus un chiffre : enregistre "
+"dans cet emplacement. Alt plus un chiffre : consulte la parole et modifie "
+"les vérifications de sécurité. Flèches gauche et droite : change de pile de "
+"macros. H ou F1 : cette aide. Échap : quitte la couche."
+
 #. Translators: Input help description for the layer command that leaves the macros layer.
 msgid "Exits the macros layer"
 msgstr "Quitte la couche de macros"

@@ -16,6 +16,7 @@ Press NVDA+alt+shift+m to enter the macros layer, then:
   edit the per-step wildcard safety checks enforced during playback.
 * left and right arrows: switch between the ten macro stacks; every numbered
   command addresses the current stack.
+* h or f1: speak a summary of these commands.
 * escape: leave the layer.
 """
 
@@ -105,6 +106,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self._layerGestures[f"kb:alt+{key}"] = "editMacroChecks"
 		self._layerGestures["kb:leftArrow"] = "previousStack"
 		self._layerGestures["kb:rightArrow"] = "nextStack"
+		self._layerGestures["kb:h"] = "layerHelp"
+		self._layerGestures["kb:f1"] = "layerHelp"
 		self._layerGestures["kb:escape"] = "exitLayer"
 		inputCore.decide_executeGesture.register(self._onDecideExecuteGesture)
 		pre_speech.register(self._onPreSpeech)
@@ -285,6 +288,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				count,
 			).format(number=self._store.currentStack, count=count)
 		ui.message(message)
+
+	@script(
+		# Translators: Input help description for the layer command that lists the layer commands.
+		description=_("Speaks the commands available in the macros layer"),
+	)
+	def script_layerHelp(self, gesture):
+		# The layer stays active so the user can press one of the announced keys.
+		ui.message(
+			_(
+				# Translators: Help message spoken when pressing h or f1 inside the macros layer.
+				"1 to 0: play the macro in that slot. "
+				"Shift plus a number: record into that slot. "
+				"Alt plus a number: review speech and edit safety checks. "
+				"Left and right arrows: switch macro stacks. "
+				"H or F1: this help. "
+				"Escape: exit the layer.",
+			),
+		)
 
 	@script(
 		# Translators: Input help description for the layer command that leaves the macros layer.
