@@ -9,6 +9,9 @@
 Press NVDA+alt+shift+m to enter the macros layer, then:
 
 * 1 to 0: play the macro stored in that slot.
+* control+1 to control+0: play the macro in that slot on repeat, waiting one
+  second between runs, until NVDA+alt+shift+m is pressed again or a safety
+  check fails.
 * shift+1 to shift+0: start recording keystrokes into that slot. NVDA speech
   and the pauses between keys are recorded too. Press NVDA+alt+shift+m again
   to stop recording. Recording into a slot that already holds a macro must be
@@ -72,6 +75,8 @@ except Exception:
 TOGGLE_GESTURE = "kb:NVDA+alt+shift+m"
 #: How long playback waits for speech satisfying a safety check before giving up, in seconds.
 SPEECH_CHECK_TIMEOUT = 3.0
+#: Pause between two runs of a macro played on repeat, in seconds.
+LOOP_INTERVAL = 1.0
 #: How often waits are interrupted to honour a cancel request, in seconds.
 _CANCEL_POLL_INTERVAL = 0.05
 #: File name of the persisted macros inside NVDA's configuration directory.
@@ -105,6 +110,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		for slot in range(1, SLOT_COUNT + 1):
 			key = keyNameForSlot(slot)
 			self._layerGestures[f"kb:{key}"] = "playMacro"
+			self._layerGestures[f"kb:control+{key}"] = "loopMacro"
 			self._layerGestures[f"kb:shift+{key}"] = "recordMacro"
 			self._layerGestures[f"kb:alt+{key}"] = "editMacroChecks"
 		self._layerGestures["kb:leftArrow"] = "previousStack"
@@ -176,7 +182,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if boundScript is not None:
 			return boundScript
 		if isinstance(gesture, KeyboardInputGesture) and gesture.isModifier:
-			# Let the user finish shift+number and alt+number combinations.
+			# Let the user finish control, shift and alt plus number combinations.
 			return None
 		return self.script_wrongLayerGesture
 
@@ -234,6 +240,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			tones.beep(120, 80)
 			return
 		self._playMacro(slot)
+
+	@script(
+		description=_(
+			# Translators: Input help description for the layer command that plays a macro on repeat.
+			"Plays the macro stored in the pressed number slot on repeat until stopped",
+		),
+	)
+	def script_loopMacro(self, gesture):
+		self._exitLayer()
+		slot = slotForKeyName(gesture.mainKeyName)
+		if slot is None:
+			tones.beep(120, 80)
+			return
+		self._playMacro(slot, loop=True)
 
 	@script(
 		# Translators: Input help description for the layer command that records a macro.
@@ -320,6 +340,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			_(
 				# Translators: Help message spoken when pressing h or f1 inside the macros layer.
 				"1 to 0: play the macro in that slot. "
+				"Control plus a number: play that macro on repeat. "
 				"Shift plus a number: record into that slot. "
 				"Alt plus a number: review speech and edit safety checks. "
 				"Left and right arrows: switch macro stacks. "
@@ -398,7 +419,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	# Playback
 
-	def _playMacro(self, slot):
+	def _playMacro(self, slot, loop=False):
 		if self.isRecording:
 			return
 		if self.isPlaying:
@@ -411,60 +432,71 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# {number} is the macro slot number.
 			ui.message(_("Macro {number} is empty").format(number=slot))
 			return
+		if loop:
+			# Translators: Announced when a macro starts playing on repeat.
+			# {number} is the macro slot number.
+			ui.message(_("Looping macro {number}").format(number=slot))
 		self._stopPlayback.clear()
 		self._playbackThread = threading.Thread(
 			target=self._playbackWorker,
 			name=f"macroPlayback{slot}",
-			args=(slot, macro),
+			args=(slot, macro, loop),
 			daemon=True,
 		)
 		self._playbackThread.start()
 
-	def _playbackWorker(self, slot, macro):
+	def _playbackWorker(self, slot, macro, loop):
 		failure = None
 		try:
-			for index, step in enumerate(macro.steps):
-				if not self._waitCancellable(step.delay):
-					return
-				try:
-					gesture = KeyboardInputGesture.fromName(step.key)
-				except (KeyError, ValueError, LookupError):
-					log.error(f"Cannot rebuild keystroke {step.key!r} for macro {slot}", exc_info=True)
-					# Translators: Error announced when a recorded keystroke cannot be replayed.
-					# {key} is the name of the keystroke.
-					failure = _("Macro stopped: cannot send {key}").format(key=step.key)
-					return
-				enforcing = step.enforce and bool(step.expected)
-				if enforcing:
-					with self._speechLock:
-						self._playbackSpeech.clear()
-					self._speechArrived.clear()
-					self._collectPlaybackSpeech = True
-				queueHandler.queueFunction(queueHandler.eventQueue, inputCore.manager.emulateGesture, gesture)
-				if enforcing:
-					matched = self._waitForSpeechMatch(step.expected)
-					self._collectPlaybackSpeech = False
-					if self._stopPlayback.is_set():
+			while True:
+				for index, step in enumerate(macro.steps):
+					if not self._waitCancellable(step.delay):
 						return
-					if not matched:
+					try:
+						gesture = KeyboardInputGesture.fromName(step.key)
+					except (KeyError, ValueError, LookupError):
+						log.error(f"Cannot rebuild keystroke {step.key!r} for macro {slot}", exc_info=True)
+						# Translators: Error announced when a recorded keystroke cannot be replayed.
+						# {key} is the name of the keystroke.
+						failure = _("Macro stopped: cannot send {key}").format(key=step.key)
+						return
+					enforcing = step.enforce and bool(step.expected)
+					if enforcing:
 						with self._speechLock:
-							heard = " ".join(self._playbackSpeech)
-						if not heard:
-							# Translators: Placeholder used in the safety check failure message
-							# when NVDA spoke nothing at all after a keystroke.
-							heard = _("nothing")
-						failure = _(
-							# Translators: Error announced when a macro safety check fails during playback.
-							# {number} is the macro slot number, {step} the failing step number,
-							# {key} the keystroke, {expected} the expected speech pattern
-							# and {heard} what NVDA actually spoke.
-							"Macro {number} stopped at step {step}, {key}: "
-							"expected speech matching {expected} but heard {heard}",
-						).format(
-							number=slot, step=index + 1, key=step.key, expected=step.expected, heard=heard
-						)
-						return
-			tones.beep(880, 60)
+							self._playbackSpeech.clear()
+						self._speechArrived.clear()
+						self._collectPlaybackSpeech = True
+					queueHandler.queueFunction(
+						queueHandler.eventQueue, inputCore.manager.emulateGesture, gesture
+					)
+					if enforcing:
+						matched = self._waitForSpeechMatch(step.expected)
+						self._collectPlaybackSpeech = False
+						if self._stopPlayback.is_set():
+							return
+						if not matched:
+							with self._speechLock:
+								heard = " ".join(self._playbackSpeech)
+							if not heard:
+								# Translators: Placeholder used in the safety check failure message
+								# when NVDA spoke nothing at all after a keystroke.
+								heard = _("nothing")
+							failure = _(
+								# Translators: Error announced when a macro safety check fails during playback.
+								# {number} is the macro slot number, {step} the failing step number,
+								# {key} the keystroke, {expected} the expected speech pattern
+								# and {heard} what NVDA actually spoke.
+								"Macro {number} stopped at step {step}, {key}: "
+								"expected speech matching {expected} but heard {heard}",
+							).format(
+								number=slot, step=index + 1, key=step.key, expected=step.expected, heard=heard
+							)
+							return
+				tones.beep(880, 60)
+				if not loop:
+					return
+				if not self._waitCancellable(LOOP_INTERVAL):
+					return
 		finally:
 			self._collectPlaybackSpeech = False
 			if failure:

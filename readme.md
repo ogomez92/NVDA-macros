@@ -7,6 +7,7 @@ Record and replay keyboard macros in ten stacks of ten slots, complete with the 
 Press `NVDA+alt+shift+m` to enter the macros layer. Inside the layer, the number row keys `1` to `0` address macro slots 1 to 10 of the current stack:
 
 * `1` to `0`: play the macro stored in that slot.
+* `ctrl+1` to `ctrl+0`: play the macro stored in that slot on repeat until you stop it.
 * `shift+1` to `shift+0`: start recording keystrokes into that slot.
 * `alt+1` to `alt+0`: open the safety checks dialog for that slot.
 * `left arrow` and `right arrow`: switch to the previous or next macro stack. NVDA announces the stack number and how many macros it holds, and the layer stays active so you can press a number right away.
@@ -30,6 +31,12 @@ If the slot already holds a macro, recording does not start right away: the add-
 Enter the layer and press the macro's number. The keystrokes are replayed with the same pauses you used while recording. NVDA commands that are part of the macro run as NVDA commands; everything else is sent to the application. A short high beep signals the end of the macro. Press `NVDA+alt+shift+m` while a macro is playing to stop it immediately.
 
 Note that NVDA does not echo characters typed by a playing macro, so the speech you hear during playback comes from the applications you are driving, for example focus changes and control announcements.
+
+## Loop playback
+
+To run a macro over and over, press `ctrl` plus its number instead of the number alone. NVDA announces "Looping macro" followed by the slot number, then plays the macro, waits one second, plays it again, and so on indefinitely. Press `NVDA+alt+shift+m` to stop the loop; the usual end-of-macro beep still sounds after every completed run.
+
+Safety checks are honoured on every run: if any enforced step fails its check, the loop stops immediately with the usual error message, so a looping macro cannot keep typing once the application stops responding the way it did while recording.
 
 ## Safety checks
 

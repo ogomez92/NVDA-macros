@@ -105,6 +105,12 @@ msgstr "Couche de macros désactivée"
 msgid "Plays the macro stored in the pressed number slot"
 msgstr "Lit la macro enregistrée dans l'emplacement du chiffre pressé"
 
+#. Translators: Input help description for the layer command that plays a macro on repeat.
+msgid "Plays the macro stored in the pressed number slot on repeat until stopped"
+msgstr ""
+"Lit en boucle la macro enregistrée dans l'emplacement du chiffre pressé "
+"jusqu'à son arrêt"
+
 #. Translators: Input help description for the layer command that records a macro.
 msgid "Starts recording a macro into the pressed number slot"
 msgstr "Commence l'enregistrement d'une macro dans l'emplacement du chiffre pressé"
@@ -154,14 +160,15 @@ msgstr "Annonce les commandes disponibles dans la couche de macros"
 
 #. Translators: Help message spoken when pressing h or f1 inside the macros layer.
 msgid ""
-"1 to 0: play the macro in that slot. Shift plus a number: record into that "
-"slot. Alt plus a number: review speech and edit safety checks. Left and "
-"right arrows: switch macro stacks. H or F1: this help. Escape: exit the "
-"layer."
+"1 to 0: play the macro in that slot. Control plus a number: play that macro "
+"on repeat. Shift plus a number: record into that slot. Alt plus a number: "
+"review speech and edit safety checks. Left and right arrows: switch macro "
+"stacks. H or F1: this help. Escape: exit the layer."
 msgstr ""
-"1 à 0 : lit la macro de cet emplacement. Maj plus un chiffre : enregistre "
-"dans cet emplacement. Alt plus un chiffre : consulte la parole et modifie "
-"les vérifications de sécurité. Flèches gauche et droite : change de pile de "
+"1 à 0 : lit la macro de cet emplacement. Contrôle plus un chiffre : lit "
+"cette macro en boucle. Maj plus un chiffre : enregistre dans cet "
+"emplacement. Alt plus un chiffre : consulte la parole et modifie les "
+"vérifications de sécurité. Flèches gauche et droite : change de pile de "
 "macros. H ou F1 : cette aide. Échap : quitte la couche."
 
 #. Translators: Input help description for the layer command that leaves the macros layer.
@@ -209,6 +216,12 @@ msgstr "Une macro est déjà en cours de lecture"
 #, python-brace-format
 msgid "Macro {number} is empty"
 msgstr "La macro {number} est vide"
+
+#. Translators: Announced when a macro starts playing on repeat.
+#. {number} is the macro slot number.
+#, python-brace-format
+msgid "Looping macro {number}"
+msgstr "Macro {number} en boucle"
 
 #. Translators: Error announced when a recorded keystroke cannot be replayed.
 #. {key} is the name of the keystroke.
