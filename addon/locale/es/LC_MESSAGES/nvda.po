@@ -1,0 +1,238 @@
+# Spanish translations for the Macros NVDA add-on.
+# Copyright (C) 2026 Oscar Gomez
+# This file is distributed under the same license as the 'macros' package.
+msgid ""
+msgstr ""
+"Project-Id-Version: 'macros' '1.0.0'\n"
+"Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
+"POT-Creation-Date: 2026-07-12 08:20+0200\n"
+"PO-Revision-Date: 2026-07-12 08:20+0200\n"
+"Last-Translator: Oscar Gomez <ogomez.s92@gmail.com>\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Translators: Title of the macro safety checks dialog.
+#. {number} is the macro slot number and {stack} the stack it belongs to.
+#, python-brace-format
+msgid "Safety checks for macro {number} in stack {stack}"
+msgstr "Comprobaciones de seguridad para la macro {number} de la pila {stack}"
+
+#. Translators: Label of the list showing every recorded step of a macro.
+msgid "&Steps:"
+msgstr "&Pasos:"
+
+#. Translators: Header of the steps list column holding the step number.
+msgid "Step"
+msgstr "Paso"
+
+#. Translators: Header of the steps list column holding the recorded keystroke.
+msgid "Keystroke"
+msgstr "Pulsación"
+
+#. Translators: Header of the steps list column holding what NVDA spoke while recording.
+msgid "Recorded speech"
+msgstr "Voz grabada"
+
+#. Translators: Header of the steps list column holding the expected speech pattern.
+msgid "Expected speech pattern"
+msgstr "Patrón de voz esperado"
+
+#. Translators: Header of the steps list column telling whether the safety check
+#. is enforced for that step.
+msgid "Enforced"
+msgstr "Forzada"
+
+#. Translators: Label of the edit field holding the expected speech pattern
+#. for the selected macro step. * matches any text.
+msgid "Expected speech &pattern, use * as a wildcard:"
+msgstr "Patrón de &voz esperado, use * como comodín:"
+
+#. Translators: Label of the checkbox that turns safety check enforcement
+#. on for the selected macro step.
+msgid "&Enforce safety check for this step"
+msgstr "&Forzar la comprobación de seguridad para este paso"
+
+#. Translators: Label of the button that copies the recorded speech of the
+#. selected step into its expected speech pattern.
+msgid "&Use recorded speech as pattern"
+msgstr "&Usar la voz grabada como patrón"
+
+#. Translators: Shown in the enforced column for steps whose safety check is on.
+msgid "Yes"
+msgstr "Sí"
+
+#. Translators: Shown in the enforced column for steps whose safety check is off.
+msgid "No"
+msgstr "No"
+
+#. Translators: Script category shown in NVDA's input gestures dialog.
+#. Add-on summary/title, usually the user visible name of the add-on
+msgid "Macros"
+msgstr "Macros"
+
+#. Translators: Announced when the macros command layer becomes active.
+msgid "Macros layer"
+msgstr "Capa de macros"
+
+#. Translators: Input help description for the main macros command.
+msgid ""
+"Turns the macros layer on or off. While recording a macro, stops recording. "
+"While a macro is playing, stops playback."
+msgstr ""
+"Activa o desactiva la capa de macros. Durante la grabación de una macro, "
+"detiene la grabación. Mientras se reproduce una macro, detiene la "
+"reproducción."
+
+#. Translators: Announced when macro playback is interrupted by the user.
+msgid "Macro playback stopped"
+msgstr "Reproducción de macro detenida"
+
+#. Translators: Announced when leaving the macros layer without running a command.
+msgid "Macros layer off"
+msgstr "Capa de macros desactivada"
+
+#. Translators: Input help description for the layer command that plays a macro.
+msgid "Plays the macro stored in the pressed number slot"
+msgstr "Reproduce la macro guardada en la ranura del número pulsado"
+
+#. Translators: Input help description for the layer command that records a macro.
+msgid "Starts recording a macro into the pressed number slot"
+msgstr "Comienza a grabar una macro en la ranura del número pulsado"
+
+#. Translators: Input help description for the layer command that edits macro safety checks.
+msgid "Opens the safety checks dialog for the macro in the pressed number slot"
+msgstr ""
+"Abre el diálogo de comprobaciones de seguridad para la macro de la ranura "
+"del número pulsado"
+
+#. Translators: Input help description for the layer command that switches
+#. to the previous macro stack.
+msgid "Switches to the previous macro stack"
+msgstr "Cambia a la pila de macros anterior"
+
+#. Translators: Input help description for the layer command that switches
+#. to the next macro stack.
+msgid "Switches to the next macro stack"
+msgstr "Cambia a la pila de macros siguiente"
+
+#. Translators: Announced when switching to a macro stack with no recorded macros.
+#. {number} is the stack number.
+#, python-brace-format
+msgid "Stack {number}, empty"
+msgstr "Pila {number}, vacía"
+
+#. Translators: Announced when switching macro stacks.
+#. {number} is the stack number and {count} how many macros it holds.
+#, python-brace-format
+msgid "Stack {number}, {count} macro"
+msgid_plural "Stack {number}, {count} macros"
+msgstr[0] "Pila {number}, {count} macro"
+msgstr[1] "Pila {number}, {count} macros"
+
+#. Translators: Input help description for the layer command that leaves the macros layer.
+msgid "Exits the macros layer"
+msgstr "Sale de la capa de macros"
+
+#. Translators: Error announced when trying to record while a macro is playing.
+msgid "Cannot record while a macro is playing"
+msgstr "No se puede grabar mientras se reproduce una macro"
+
+#. Translators: Announced when macro recording starts.
+#. {number} is the macro slot number.
+#, python-brace-format
+msgid "Recording macro {number}"
+msgstr "Grabando macro {number}"
+
+#. Translators: Announced when recording ends without any keystrokes.
+#. {number} is the macro slot number.
+#, python-brace-format
+msgid ""
+"Recording stopped. Macro {number} is unchanged because no keystrokes were "
+"recorded"
+msgstr ""
+"Grabación detenida. La macro {number} no ha cambiado porque no se grabó "
+"ninguna pulsación"
+
+#. Translators: Announced when a macro has been recorded.
+#. {number} is the macro slot number and {count} the amount of recorded keystrokes.
+#, python-brace-format
+msgid "Macro {number} recorded with {count} keystroke"
+msgid_plural "Macro {number} recorded with {count} keystrokes"
+msgstr[0] "Macro {number} grabada con {count} pulsación"
+msgstr[1] "Macro {number} grabada con {count} pulsaciones"
+
+#. Translators: Error announced when the macros file cannot be written to disk.
+msgid "Error saving macros"
+msgstr "Error al guardar las macros"
+
+#. Translators: Error announced when trying to start a macro while another is playing.
+msgid "A macro is already playing"
+msgstr "Ya se está reproduciendo una macro"
+
+#. Translators: Announced when the chosen macro slot has no recording.
+#. {number} is the macro slot number.
+#, python-brace-format
+msgid "Macro {number} is empty"
+msgstr "La macro {number} está vacía"
+
+#. Translators: Error announced when a recorded keystroke cannot be replayed.
+#. {key} is the name of the keystroke.
+#, python-brace-format
+msgid "Macro stopped: cannot send {key}"
+msgstr "Macro detenida: no se puede enviar {key}"
+
+#. Translators: Placeholder used in the safety check failure message
+#. when NVDA spoke nothing at all after a keystroke.
+msgid "nothing"
+msgstr "nada"
+
+#. Translators: Error announced when a macro safety check fails during playback.
+#. {number} is the macro slot number, {step} the failing step number,
+#. {key} the keystroke, {expected} the expected speech pattern
+#. and {heard} what NVDA actually spoke.
+#, python-brace-format
+msgid ""
+"Macro {number} stopped at step {step}, {key}: expected speech matching "
+"{expected} but heard {heard}"
+msgstr ""
+"Macro {number} detenida en el paso {step}, {key}: se esperaba voz que "
+"coincidiera con {expected} pero se escuchó {heard}"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-on store
+msgid ""
+"Record and replay keyboard macros in ten stacks of ten slots.\n"
+"Press NVDA+alt+shift+m to enter the macros layer, then press shift plus a "
+"number to record,\n"
+"a number to play, alt plus a number to edit the per-step speech safety "
+"checks,\n"
+"or the left and right arrows to switch stacks.\n"
+"Recordings keep the pauses between keystrokes and everything NVDA spoke,\n"
+"and playback can be stopped as soon as NVDA's speech no longer matches what "
+"an enforced step expects."
+msgstr ""
+"Graba y reproduce macros de teclado en diez pilas de diez ranuras.\n"
+"Pulsa NVDA+alt+shift+m para entrar en la capa de macros; después pulsa "
+"shift más un número para grabar,\n"
+"un número para reproducir, alt más un número para editar las comprobaciones "
+"de seguridad de voz por paso,\n"
+"o las flechas izquierda y derecha para cambiar de pila.\n"
+"Las grabaciones conservan las pausas entre pulsaciones y todo lo que NVDA "
+"verbalizó,\n"
+"y la reproducción puede detenerse en cuanto la voz de NVDA deje de "
+"coincidir con lo que espera un paso forzado."
+
+#. Brief changelog for this version
+#. Translators: what's new content for the add-on version to be shown in the add-on store
+msgid ""
+"Initial release: record and play keyboard macros with timing,\n"
+"recorded speech, macro stacks, and optional per-step wildcard speech safety "
+"checks."
+msgstr ""
+"Versión inicial: graba y reproduce macros de teclado con temporización,\n"
+"voz grabada, pilas de macros y comprobaciones de seguridad de voz "
+"opcionales por paso con comodines."
