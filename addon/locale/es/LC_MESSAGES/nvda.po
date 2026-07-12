@@ -109,6 +109,15 @@ msgstr "Reproduce la macro guardada en la ranura del número pulsado"
 msgid "Starts recording a macro into the pressed number slot"
 msgstr "Comienza a grabar una macro en la ranura del número pulsado"
 
+#. Translators: Announced when recording into a slot that already
+#. holds a macro. {number} is the macro slot number and {key} the
+#. number row key to press again with shift to confirm.
+#, python-brace-format
+msgid "Macro {number} is already recorded, press shift+{key} again to overwrite it"
+msgstr ""
+"La macro {number} ya está grabada, pulse shift+{key} otra vez para "
+"sobrescribirla"
+
 #. Translators: Input help description for the layer command that edits macro safety checks.
 msgid "Opens the safety checks dialog for the macro in the pressed number slot"
 msgstr ""

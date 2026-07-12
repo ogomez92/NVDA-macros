@@ -23,6 +23,8 @@ There are ten independent stacks of ten macros each, so you can keep up to one h
 
 After pressing `shift` plus a number, everything you type is recorded into that slot: the keystrokes themselves, how long you waited between them, and all the speech NVDA produced after each keystroke. Press `NVDA+alt+shift+m` to stop recording; the stop command itself is never recorded. If you stopped without pressing any key, the slot is left unchanged.
 
+If the slot already holds a macro, recording does not start right away: the add-on announces it and waits for you to press `shift` plus the same number again, so you cannot overwrite a macro by accident. Any other command cancels the confirmation and runs as usual.
+
 ## Playback
 
 Enter the layer and press the macro's number. The keystrokes are replayed with the same pauses you used while recording. NVDA commands that are part of the macro run as NVDA commands; everything else is sent to the application. A short high beep signals the end of the macro. Press `NVDA+alt+shift+m` while a macro is playing to stop it immediately.

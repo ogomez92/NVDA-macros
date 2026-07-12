@@ -11,7 +11,8 @@ Press NVDA+alt+shift+m to enter the macros layer, then:
 * 1 to 0: play the macro stored in that slot.
 * shift+1 to shift+0: start recording keystrokes into that slot. NVDA speech
   and the pauses between keys are recorded too. Press NVDA+alt+shift+m again
-  to stop recording.
+  to stop recording. Recording into a slot that already holds a macro must be
+  confirmed by pressing the same gesture again.
 * alt+1 to alt+0: review what NVDA spoke after each recorded keystroke and
   edit the per-step wildcard safety checks enforced during playback.
 * left and right arrows: switch between the ten macro stacks; every numbered
@@ -92,6 +93,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		#: MacroRecorder while a recording is in progress, else None.
 		self._recorder = None
 		self._recordingSlot = None
+		#: Occupied slot whose overwrite is awaiting confirmation, else None.
+		self._pendingRecordSlot = None
 		self._playbackThread = None
 		self._stopPlayback = threading.Event()
 		self._speechLock = threading.Lock()
@@ -188,6 +191,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if not self._layerActive:
 			return
 		self._layerActive = False
+		self._pendingRecordSlot = None
 		for gestureIdentifier in self._layerGestures:
 			try:
 				self.removeGestureBinding(gestureIdentifier)
@@ -236,11 +240,26 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		description=_("Starts recording a macro into the pressed number slot"),
 	)
 	def script_recordMacro(self, gesture):
-		self._exitLayer()
 		slot = slotForKeyName(gesture.mainKeyName)
 		if slot is None:
+			self._exitLayer()
 			tones.beep(120, 80)
 			return
+		macro = self._store.macros.get(slot)
+		if macro is not None and macro.steps and slot != self._pendingRecordSlot:
+			# The slot is taken; keep the layer active and require the same
+			# gesture once more before anything is overwritten.
+			self._pendingRecordSlot = slot
+			ui.message(
+				_(
+					# Translators: Announced when recording into a slot that already
+					# holds a macro. {number} is the macro slot number and {key} the
+					# number row key to press again with shift to confirm.
+					"Macro {number} is already recorded, press shift+{key} again to overwrite it",
+				).format(number=slot, key=keyNameForSlot(slot)),
+			)
+			return
+		self._exitLayer()
 		self._startRecording(slot)
 
 	@script(
@@ -272,6 +291,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._switchStack(1)
 
 	def _switchStack(self, delta):
+		# A pending overwrite confirmation refers to a slot of the old stack.
+		self._pendingRecordSlot = None
 		self._store.setStack(cycleStack(self._store.currentStack, delta))
 		self._saveStore()
 		count = len(self._store.macros)
