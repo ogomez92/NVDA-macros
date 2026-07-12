@@ -25,10 +25,6 @@ msgstr "Vérifications de sécurité pour la macro {number} de la pile {stack}"
 msgid "&Steps:"
 msgstr "É&tapes :"
 
-#. Translators: Header of the steps list column holding the step number.
-msgid "Step"
-msgstr "Étape"
-
 #. Translators: Header of the steps list column holding the recorded keystroke.
 msgid "Keystroke"
 msgstr "Frappe"
@@ -46,6 +42,11 @@ msgstr "Modèle de parole attendu"
 msgid "Enforced"
 msgstr "Imposée"
 
+#. Translators: Header of the steps list column holding the delay in seconds
+#. waited before pressing that step's key.
+msgid "Delay (seconds)"
+msgstr "Délai (secondes)"
+
 #. Translators: Label of the edit field holding the expected speech pattern
 #. for the selected macro step. * matches any text.
 msgid "Expected speech &pattern, use * as a wildcard:"
@@ -60,6 +61,11 @@ msgstr "&Imposer la vérification de sécurité pour cette étape"
 #. selected step into its expected speech pattern.
 msgid "&Use recorded speech as pattern"
 msgstr "&Utiliser la parole enregistrée comme modèle"
+
+#. Translators: Label of the edit field holding the delay in seconds waited
+#. before pressing the selected macro step's key.
+msgid "&Delay in seconds before pressing this key:"
+msgstr "&Délai en secondes avant d'appuyer sur cette touche :"
 
 #. Translators: Shown in the enforced column for steps whose safety check is on.
 msgid "Yes"

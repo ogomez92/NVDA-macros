@@ -25,10 +25,6 @@ msgstr "Comprobaciones de seguridad para la macro {number} de la pila {stack}"
 msgid "&Steps:"
 msgstr "&Pasos:"
 
-#. Translators: Header of the steps list column holding the step number.
-msgid "Step"
-msgstr "Paso"
-
 #. Translators: Header of the steps list column holding the recorded keystroke.
 msgid "Keystroke"
 msgstr "Pulsación"
@@ -46,6 +42,11 @@ msgstr "Patrón de voz esperado"
 msgid "Enforced"
 msgstr "Forzada"
 
+#. Translators: Header of the steps list column holding the delay in seconds
+#. waited before pressing that step's key.
+msgid "Delay (seconds)"
+msgstr "Retardo (segundos)"
+
 #. Translators: Label of the edit field holding the expected speech pattern
 #. for the selected macro step. * matches any text.
 msgid "Expected speech &pattern, use * as a wildcard:"
@@ -60,6 +61,11 @@ msgstr "&Forzar la comprobación de seguridad para este paso"
 #. selected step into its expected speech pattern.
 msgid "&Use recorded speech as pattern"
 msgstr "&Usar la voz grabada como patrón"
+
+#. Translators: Label of the edit field holding the delay in seconds waited
+#. before pressing the selected macro step's key.
+msgid "&Delay in seconds before pressing this key:"
+msgstr "&Retardo en segundos antes de pulsar esta tecla:"
 
 #. Translators: Shown in the enforced column for steps whose safety check is on.
 msgid "Yes"

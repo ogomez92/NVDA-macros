@@ -33,7 +33,9 @@ Note that NVDA does not echo characters typed by a playing macro, so the speech 
 
 While recording, the add-on remembers what NVDA spoke after every keystroke. Safety checks are set per step and are off by default: to manage them, enter the layer and press `alt` plus the macro's number.
 
-The dialog shows each step with its keystroke, the recorded speech, the expected speech pattern, and whether the check is enforced. Select a step, edit its pattern in the edit field, and check "Enforce safety check for this step" to turn enforcement on for exactly that step; other steps can stay unchecked. The "Use recorded speech as pattern" button resets the pattern to what NVDA originally spoke.
+The dialog shows each step with its keystroke, the recorded speech, the expected speech pattern, whether the check is enforced, and the delay in seconds waited before that key is pressed. Select a step, edit its pattern in the edit field, and check "Enforce safety check for this step" to turn enforcement on for exactly that step; other steps can stay unchecked. The "Use recorded speech as pattern" button resets the pattern to what NVDA originally spoke.
+
+The same dialog also lets you fix the timing of each step: the delay edit field changes how long playback waits before pressing the selected step's key, handy when you paused to think while recording and want playback to move faster, or when an application needs more time than you gave it. Delays are given in seconds, accept decimals such as `0.5`, and are capped at 60 seconds.
 
 During playback, every enforced step must produce speech matching its pattern within a few seconds, otherwise the macro stops with an error message telling you which step failed, what was expected, and what was heard. This protects you from a macro blindly typing into the wrong window.
 
