@@ -11,6 +11,7 @@ Press `NVDA+alt+shift+m` to enter the macros layer. Inside the layer, the number
 * `shift+1` to `shift+0`: start recording keystrokes into that slot.
 * `alt+1` to `alt+0`: open the safety checks dialog for that slot.
 * `left arrow` and `right arrow`: switch to the previous or next macro stack. NVDA announces the stack number and how many macros it holds, and the layer stays active so you can press a number right away.
+* `c`: open the configuration dialog.
 * `h` or `f1`: speak a summary of these commands. The layer stays active.
 * `escape`: leave the layer without doing anything.
 
@@ -34,7 +35,7 @@ Note that NVDA does not echo characters typed by a playing macro, so the speech 
 
 ## Loop playback
 
-To run a macro over and over, press `ctrl` plus its number instead of the number alone. NVDA announces "Looping macro" followed by the slot number, then plays the macro, waits one second, plays it again, and so on indefinitely. Press `NVDA+alt+shift+m` to stop the loop; the usual end-of-macro beep still sounds after every completed run.
+To run a macro over and over, press `ctrl` plus its number instead of the number alone. NVDA announces "Looping macro" followed by the slot number, then plays the macro, waits one second (or the delay set in the configuration dialog), plays it again, and so on indefinitely. Press `NVDA+alt+shift+m` to stop the loop; the usual end-of-macro beep still sounds after every completed run.
 
 Safety checks are honoured on every run: if any enforced step fails its check, the loop stops immediately with the usual error message, so a looping macro cannot keep typing once the application stops responding the way it did while recording.
 
@@ -50,6 +51,15 @@ During playback, every enforced step must produce speech matching its pattern wi
 
 Patterns are matched anywhere inside the spoken text, ignoring case, and `*` matches any run of characters. For example, after tabbing to a button announced as "Save button", all of these patterns match: `save`, `Save`, `s*ve`, `S*ve`, `* button`. A step with an empty pattern is never checked.
 
+## Configuration
+
+Enter the layer and press `c` to open the configuration dialog. It holds two settings:
+
+* Silence speech while running a macro (off by default): when checked, NVDA says nothing while a macro plays, so you are not flooded by the speech the replayed keystrokes produce. Safety checks still work, because the add-on watches what NVDA would have spoken. Your usual speech mode comes back as soon as playback ends or is stopped.
+* Delay in milliseconds between runs of a looping macro (1000 by default): how long a macro played with `ctrl` plus its number waits after one run ends before the next one starts, from 0 to 60000 milliseconds.
+
+Both settings are stored in NVDA's configuration and take effect immediately; the loop delay even applies to a loop that is already running.
+
 ## Storage
 
 Macros, their safety checks, and the selected stack are saved to `macros.json` in your NVDA configuration directory as soon as recording stops, a stack is switched, or the safety checks dialog is accepted, so everything survives NVDA restarts.
@@ -63,4 +73,4 @@ This repository uses the NVDA add-on scons template with [uv](https://docs.astra
 * Lint and format: `uv run ruff check .` and `uv run ruff format addon tests`.
 * Generate the translation template: `uv run scons pot`.
 
-The add-on sources live in `addon/globalPlugins/macros/`: `macroEngine.py` holds the NVDA-independent model (recording, wildcard matching, persistence) covered by the tests, `__init__.py` wires it to NVDA (layered gestures, keystroke capture through `inputCore.decide_executeGesture`, speech capture through `speech.extensions.pre_speech`, playback through `inputCore.manager.emulateGesture`), and `dialogs.py` contains the safety checks dialog.
+The add-on sources live in `addon/globalPlugins/macros/`: `macroEngine.py` holds the NVDA-independent model (recording, wildcard matching, persistence) covered by the tests, `__init__.py` wires it to NVDA (layered gestures, keystroke capture through `inputCore.decide_executeGesture`, speech capture through `speech.extensions.pre_speech`, playback through `inputCore.manager.emulateGesture`), and `dialogs.py` contains the safety checks and configuration dialogs.

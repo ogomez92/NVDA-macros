@@ -75,6 +75,20 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
+#. Translators: Title of the macros configuration dialog.
+msgid "Macros configuration"
+msgstr "Configuración de macros"
+
+#. Translators: Label of the checkbox that silences NVDA speech while
+#. a macro is playing.
+msgid "&Silence speech while running a macro"
+msgstr "&Silenciar la voz mientras se ejecuta una macro"
+
+#. Translators: Label of the edit field holding the pause in milliseconds
+#. between two runs of a macro played on repeat.
+msgid "&Delay in milliseconds between runs of a looping macro:"
+msgstr "&Retardo en milisegundos entre ejecuciones de una macro en bucle:"
+
 #. Translators: Script category shown in NVDA's input gestures dialog.
 #. Add-on summary/title, usually the user visible name of the add-on
 msgid "Macros"
@@ -154,6 +168,11 @@ msgid_plural "Stack {number}, {count} macros"
 msgstr[0] "Pila {number}, {count} macro"
 msgstr[1] "Pila {number}, {count} macros"
 
+#. Translators: Input help description for the layer command that opens
+#. the configuration dialog.
+msgid "Opens the macros configuration dialog"
+msgstr "Abre el diálogo de configuración de macros"
+
 #. Translators: Input help description for the layer command that lists the layer commands.
 msgid "Speaks the commands available in the macros layer"
 msgstr "Verbaliza las órdenes disponibles en la capa de macros"
@@ -163,13 +182,14 @@ msgid ""
 "1 to 0: play the macro in that slot. Control plus a number: play that macro "
 "on repeat. Shift plus a number: record into that slot. Alt plus a number: "
 "review speech and edit safety checks. Left and right arrows: switch macro "
-"stacks. H or F1: this help. Escape: exit the layer."
+"stacks. C: open the configuration dialog. H or F1: this help. Escape: exit "
+"the layer."
 msgstr ""
 "1 a 0: reproduce la macro de esa ranura. Control más un número: reproduce "
 "esa macro en bucle. Shift más un número: graba en esa ranura. Alt más un "
 "número: revisa la voz y edita las comprobaciones de seguridad. Flechas "
-"izquierda y derecha: cambia de pila de macros. H o F1: esta ayuda. Escape: "
-"sale de la capa."
+"izquierda y derecha: cambia de pila de macros. C: abre el diálogo de "
+"configuración. H o F1: esta ayuda. Escape: sale de la capa."
 
 #. Translators: Input help description for the layer command that leaves the macros layer.
 msgid "Exits the macros layer"

@@ -9,9 +9,9 @@
 Press NVDA+alt+shift+m to enter the macros layer, then:
 
 * 1 to 0: play the macro stored in that slot.
-* control+1 to control+0: play the macro in that slot on repeat, waiting one
-  second between runs, until NVDA+alt+shift+m is pressed again or a safety
-  check fails.
+* control+1 to control+0: play the macro in that slot on repeat, waiting the
+  configured delay between runs, until NVDA+alt+shift+m is pressed again or a
+  safety check fails.
 * shift+1 to shift+0: start recording keystrokes into that slot. NVDA speech
   and the pauses between keys are recorded too. Press NVDA+alt+shift+m again
   to stop recording. Recording into a slot that already holds a macro must be
@@ -20,6 +20,8 @@ Press NVDA+alt+shift+m to enter the macros layer, then:
   edit the per-step wildcard safety checks enforced during playback.
 * left and right arrows: switch between the ten macro stacks; every numbered
   command addresses the current stack.
+* c: open the configuration dialog (silence speech while a macro runs, delay
+  between the runs of a looping macro).
 * h or f1: speak a summary of these commands.
 * escape: leave the layer.
 """
@@ -30,11 +32,13 @@ import threading
 import time
 
 import addonHandler
+import config
 import globalPluginHandler
 import globalVars
 import gui
 import inputCore
 import queueHandler
+import speech
 import tones
 import ui
 import wx
@@ -75,12 +79,15 @@ except Exception:
 TOGGLE_GESTURE = "kb:NVDA+alt+shift+m"
 #: How long playback waits for speech satisfying a safety check before giving up, in seconds.
 SPEECH_CHECK_TIMEOUT = 3.0
-#: Pause between two runs of a macro played on repeat, in seconds.
-LOOP_INTERVAL = 1.0
 #: How often waits are interrupted to honour a cancel request, in seconds.
 _CANCEL_POLL_INTERVAL = 0.05
 #: File name of the persisted macros inside NVDA's configuration directory.
 MACROS_FILE = "macros.json"
+
+config.conf.spec["macros"] = {
+	"silenceSpeechWhilePlaying": "boolean(default=False)",
+	"loopDelayMs": "integer(default=1000, min=0, max=60000)",
+}
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
@@ -102,6 +109,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._pendingRecordSlot = None
 		self._playbackThread = None
 		self._stopPlayback = threading.Event()
+		#: Speech mode to restore after silenced playback, else None.
+		self._previousSpeechMode = None
 		self._speechLock = threading.Lock()
 		self._playbackSpeech = []
 		self._speechArrived = threading.Event()
@@ -115,6 +124,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self._layerGestures[f"kb:alt+{key}"] = "editMacroChecks"
 		self._layerGestures["kb:leftArrow"] = "previousStack"
 		self._layerGestures["kb:rightArrow"] = "nextStack"
+		self._layerGestures["kb:c"] = "openConfiguration"
 		self._layerGestures["kb:h"] = "layerHelp"
 		self._layerGestures["kb:f1"] = "layerHelp"
 		self._layerGestures["kb:escape"] = "exitLayer"
@@ -123,6 +133,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def terminate(self):
 		self._stopPlayback.set()
+		self._restoreSpeechMode()
 		self._recorder = None
 		self._recordingSlot = None
 		inputCore.decide_executeGesture.unregister(self._onDecideExecuteGesture)
@@ -219,6 +230,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			return
 		if self.isPlaying:
 			self._stopPlayback.set()
+			self._restoreSpeechMode()
 			# Translators: Announced when macro playback is interrupted by the user.
 			ui.message(_("Macro playback stopped"))
 			return
@@ -331,6 +343,29 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		ui.message(message)
 
 	@script(
+		# Translators: Input help description for the layer command that opens
+		# the configuration dialog.
+		description=_("Opens the macros configuration dialog"),
+	)
+	def script_openConfiguration(self, gesture):
+		self._exitLayer()
+		wx.CallAfter(self._showConfigurationDialog)
+
+	def _showConfigurationDialog(self):
+		from .dialogs import MacroConfigurationDialog
+
+		gui.mainFrame.prePopup()
+		try:
+			dialog = MacroConfigurationDialog(gui.mainFrame)
+			try:
+				if dialog.ShowModal() == wx.ID_OK:
+					dialog.applyToConfig()
+			finally:
+				dialog.Destroy()
+		finally:
+			gui.mainFrame.postPopup()
+
+	@script(
 		# Translators: Input help description for the layer command that lists the layer commands.
 		description=_("Speaks the commands available in the macros layer"),
 	)
@@ -344,6 +379,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				"Shift plus a number: record into that slot. "
 				"Alt plus a number: review speech and edit safety checks. "
 				"Left and right arrows: switch macro stacks. "
+				"C: open the configuration dialog. "
 				"H or F1: this help. "
 				"Escape: exit the layer.",
 			),
@@ -445,9 +481,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		)
 		self._playbackThread.start()
 
+	def _silenceSpeechIfConfigured(self):
+		if not config.conf["macros"]["silenceSpeechWhilePlaying"]:
+			return
+		if self._previousSpeechMode is None:
+			self._previousSpeechMode = speech.getState().speechMode
+			speech.setSpeechMode(speech.SpeechMode.off)
+
+	def _restoreSpeechMode(self):
+		mode = self._previousSpeechMode
+		self._previousSpeechMode = None
+		if mode is not None:
+			speech.setSpeechMode(mode)
+
 	def _playbackWorker(self, slot, macro, loop):
 		failure = None
 		try:
+			self._silenceSpeechIfConfigured()
 			while True:
 				for index, step in enumerate(macro.steps):
 					if not self._waitCancellable(step.delay):
@@ -495,10 +545,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				tones.beep(880, 60)
 				if not loop:
 					return
-				if not self._waitCancellable(LOOP_INTERVAL):
+				if not self._waitCancellable(config.conf["macros"]["loopDelayMs"] / 1000.0):
 					return
 		finally:
 			self._collectPlaybackSpeech = False
+			self._restoreSpeechMode()
 			if failure:
 				tones.beep(220, 150)
 				queueHandler.queueFunction(queueHandler.eventQueue, ui.message, failure)

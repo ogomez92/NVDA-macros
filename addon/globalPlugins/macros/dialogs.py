@@ -4,9 +4,11 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""GUI for reviewing recorded speech and editing macro safety checks."""
+"""GUI for reviewing recorded speech, editing macro safety checks
+and configuring the add-on."""
 
 import addonHandler
+import config
 import wx
 from gui import guiHelper, nvdaControls
 
@@ -195,3 +197,44 @@ class MacroChecksDialog(wx.Dialog):
 			step.expected = pattern
 			step.enforce = enforce
 			step.delay = delay
+
+
+class MacroConfigurationDialog(wx.Dialog):
+	"""Lets the user change the add-on wide settings stored in NVDA's configuration."""
+
+	def __init__(self, parent):
+		super().__init__(
+			parent,
+			# Translators: Title of the macros configuration dialog.
+			title=_("Macros configuration"),
+		)
+		mainSizer = wx.BoxSizer(wx.VERTICAL)
+		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
+
+		self.silenceCheckbox = sHelper.addItem(
+			# Translators: Label of the checkbox that silences NVDA speech while
+			# a macro is playing.
+			wx.CheckBox(self, label=_("&Silence speech while running a macro")),
+		)
+		self.silenceCheckbox.SetValue(config.conf["macros"]["silenceSpeechWhilePlaying"])
+
+		self.loopDelayEdit = sHelper.addLabeledControl(
+			# Translators: Label of the edit field holding the pause in milliseconds
+			# between two runs of a macro played on repeat.
+			_("&Delay in milliseconds between runs of a looping macro:"),
+			nvdaControls.SelectOnFocusSpinCtrl,
+			min=0,
+			max=60000,
+			initial=config.conf["macros"]["loopDelayMs"],
+		)
+
+		sHelper.addDialogDismissButtons(self.CreateButtonSizer(wx.OK | wx.CANCEL))
+		mainSizer.Add(sHelper.sizer, border=guiHelper.BORDER_FOR_DIALOGS, flag=wx.ALL)
+		self.SetSizerAndFit(mainSizer)
+		self.silenceCheckbox.SetFocus()
+		self.CentreOnScreen()
+
+	def applyToConfig(self):
+		"""Write the edited settings into NVDA's configuration."""
+		config.conf["macros"]["silenceSpeechWhilePlaying"] = self.silenceCheckbox.IsChecked()
+		config.conf["macros"]["loopDelayMs"] = self.loopDelayEdit.GetValue()
